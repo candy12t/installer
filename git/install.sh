@@ -1,40 +1,43 @@
 #! /bin/bash
+
+#
+# git install
+#
+
 set -eu
 
 script_home="$(cd $(dirname "$0") && pwd)"
 cd "${script_home}"
 
-GIT_VERSION=2.31.1
-GIT_TARBALL="v${GIT_VERSION}.tar.gz"
-GIT_BUILD_DIR="git-${GIT_VERSION}"
-GIT_PREFIX="/usr/local"
+version=2.31.1
+tarball="v${version}.tar.gz"
+archivedir="git-${version}"
 
-if [ "$(uname -s)" != "Linux" ]; then
-  echo "Error: This script is only for Linux. Exiting."
+prefix="/usr/local"
+
+if [ ! -e "/etc/debian_version" ]; then
+  echo "Error: This script is only for Debian"
   exit 1
 fi
 
-if command -v apt &> /dev/null; then
-  sudo apt -y install make autoconf build-essential
-  sudo apt -y build-dep git
+sudo apt install -y build-essential autoconf libssl-dev
+sudo apt build-dep -y git
+
+if [ ! -f "${tarball}" ]; then
+  wget "https://github.com/git/git/archive/refs/tags/${tarball}" -O "${tarball}"
 fi
 
-if [ ! -f "$GIT_TARBALL" ]; then
-  wget "https://github.com/git/git/archive/refs/tags/${GIT_TARBALL}" -O "$GIT_TARBALL"
+if [ -e "${archivedir}" ]; then
+  sudo rm -rf "${archivedir}"
 fi
 
-if [ -e "$GIT_BUILD_DIR" ]; then
-  rm -rf "$GIT_BUILD_DIR"
-fi
-
-tar zxf "$GIT_TARBALL"
-pushd "$GIT_BUILD_DIR"
+tar zxvf "${tarball}"
+cd "${archivedir}"
 
 make configure
-./configure --prefix="$GIT_PREFIX"
+./configure --prefix=${prefix}
 make all doc
 make install install-doc install-html
 
-popd
-rm -rf "$GIT_BUILD_DIR"
-exit 0
+cd "${script_home}"
+sudo rm -rf "${archivedir}"
