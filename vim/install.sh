@@ -28,10 +28,6 @@ if [ ! -f "${tarball}" ]; then
   wget "https://github.com/vim/vim/archive/refs/tags/${tarball}" -O "${tarball}"
 fi
 
-if [ -e "${archivedir}" ]; then
-  rm -rf "${archivedir}"
-fi
-
 tar zxvf "${tarball}"
 cd "${archivedir}"
 
@@ -42,3 +38,8 @@ cd "${archivedir}"
 
 make
 make install
+
+cd "${script_home}"
+rm -rf "${archivedir}"
+
+exit 0;

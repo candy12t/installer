@@ -27,10 +27,6 @@ if [ ! -f "${tarball}" ]; then
   wget "https://github.com/git/git/archive/refs/tags/${tarball}" -O "${tarball}"
 fi
 
-if [ -e "${archivedir}" ]; then
-  sudo rm -rf "${archivedir}"
-fi
-
 tar zxvf "${tarball}"
 cd "${archivedir}"
 
@@ -40,4 +36,6 @@ make all doc
 make install install-doc install-html
 
 cd "${script_home}"
-sudo rm -rf "${archivedir}"
+rm -rf "${archivedir}"
+
+exit 0;
