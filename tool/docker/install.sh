@@ -46,6 +46,12 @@ __dpkg() {
   dpkg -i $1
 }
 
+__user_add() {
+  groupadd docker
+  usemod -aG docker $USER
+  newgrp docker
+}
+
 main() {
   __check_environment
   __download_debs
